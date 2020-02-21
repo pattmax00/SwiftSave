@@ -4,24 +4,22 @@
 
 namespace fs = std::filesystem;
 
-void backup(std::string backupDirs, std::string backupLocation) {
-    std::ifstream backupDirsStream(backupDirs); // Opens backupDirs as file
-    std::ifstream backupLocationStream(backupLocation); // Opens backupLocation as file
+std::string backupLocationPath;
 
-    // Sets backupLocationPath to the first line in backupLocationStream
-    std::string backupLocationPath;
+// Sets all global variables according to backup.conf
+void loadConf(std::string backupConf) {
+    std::ifstream backupLocationStream(backupConf); // Opens backupConf as file
     getline(backupLocationStream, backupLocationPath);
+}
 
-    // Checks to make sure backupDirsStream and backupLocationStream are not empty.
-    if (!backupDirsStream || !backupLocationStream) {
-        std::cout << "Error: backup.dirs or backup.location do not exist or are empty" << std::endl;
-        std::cout
-                << "Please make sure that backup.dirs and backup.location are in the same location as this executable."
-                << std::endl;
+void backup(std::string backupDirs, std::string backupLocationPath) {
+    std::ifstream backupDirsStream(backupDirs); // Opens backupDirs as file
+
+    // Checks to make sure backupDirsStream is not empty.
+    if (!backupDirsStream) {
+        std::cout << "Error: backup.dirs does not exist or is empty" << std::endl;
+        std::cout << "Please make sure that backup.dirs is in the same location as this executable." << std::endl;
         std::cout << "backup.dirs must contain all the directories whose contents you want saved." << std::endl;
-        std::cout
-                << "backup.location must have its first line as the path where all backup.dirs' directories should be copied to."
-                << std::endl;
     } else {
         // Goes through every line in backupDirsStream, sets that value to line, and saves that path to backupLocationPath
         for (std::string line; getline(backupDirsStream, line);) {
@@ -34,7 +32,8 @@ void backup(std::string backupDirs, std::string backupLocation) {
 }
 
 int main() {
+    loadConf("backup.conf");
     std::cout << "Backup started" << std::endl;
-    backup("backup.dirs", "backup.location");
+    backup("backup.dirs", backupLocationPath);
     return 0;
 }
