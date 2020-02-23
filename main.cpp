@@ -5,9 +5,13 @@
 namespace fs = std::filesystem;
 
 std::string backupLocationPath;
+bool zip = true;
+bool encrypt = false;
+std::string encryptKey;
 
 // Sets all global variables according to backup.conf
 void loadConf(std::string backupConf) {
+    // Sets backupLocationPath
     std::ifstream backupLocationStream(backupConf); // Opens backupConf as file
     getline(backupLocationStream, backupLocationPath);
 }
@@ -22,9 +26,18 @@ void backup(std::string backupDirs, std::string backupLocationPath) {
         std::cout << "backup.dirs must contain all the directories whose contents you want saved." << std::endl;
     } else {
         // Goes through every line in backupDirsStream, sets that value to line, and saves that path to backupLocationPath
+        std::string rootFolder;
+        std::string copyTo;
         for (std::string line; getline(backupDirsStream, line);) {
+            // Finds the folder whose contents is being copied and assigns it to rootFolder
+            std::size_t found = line.find_last_of("/\\");
+            rootFolder = "/" + line.substr(found + 1);
+
+            // Copies contents to backupLocationPath + rootFolder
             std::cout << "Copying: " << line << " to " << backupLocationPath << std::endl;
-            fs::copy(line, backupLocationPath, fs::copy_options::recursive | fs::copy_options::update_existing);
+            copyTo = backupLocationPath +
+                     rootFolder; // Sets copyTo to backupLocationPath + rootFolder
+            fs::copy(line, copyTo, fs::copy_options::recursive | fs::copy_options::update_existing);
             std::cout << "Finished backing up: " << line << std::endl;
         }
         std::cout << "Finished backup with no errors." << std::endl;
