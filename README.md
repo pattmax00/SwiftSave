@@ -10,6 +10,7 @@ A simple and fast backup program
 # To-do
 - [X] Add backup function to copy directory contents from backup.dirs to a specified copy location.
 - [X] Make backup.location a general config file (backup.conf)
-- [ ] Copy root dir along with dir contents  (Ex. /backupLocation/backedUpFiles/ instead of dumping all files into /backupLocation/)
+- [X] Copy root dir along with dir contents  (Ex. /backupLocation/backedUpFiles/ instead of dumping all files into /backupLocation/)
+- [ ] Create backupLocationPath if it doesn't already exist to avoid "No such file or directory" error
 - [ ] Add option to zip final product
 - [ ] Add option to encrypt final product (only available in zip mode)
